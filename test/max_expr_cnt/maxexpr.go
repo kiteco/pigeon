@@ -15,97 +15,19 @@ import (
 )
 
 func main() {
-	ast, err := Parse("STDIN", []byte("foo"))
-	if err != nil {
-		fmt.Printf("error: %s\n", err)
-		return
-	}
-	fmt.Printf("%+v\n", ast)
 }
 
 var g = &grammar{
 	rules: []*rule{
 		{
-			name: "TableRef",
-			pos:  position{line: 14, col: 1, offset: 174},
-			expr: &actionExpr{
-				pos: position{line: 14, col: 13, offset: 186},
-				run: (*parser).callonTableRef1,
-				expr: &seqExpr{
-					pos: position{line: 14, col: 13, offset: 186},
-					exprs: []interface{}{
-						&labeledExpr{
-							pos:   position{line: 14, col: 13, offset: 186},
-							label: "database",
-							expr: &zeroOrOneExpr{
-								pos: position{line: 14, col: 22, offset: 195},
-								expr: &seqExpr{
-									pos: position{line: 14, col: 23, offset: 196},
-									exprs: []interface{}{
-										&ruleRefExpr{
-											pos:  position{line: 14, col: 23, offset: 196},
-											name: "ID",
-										},
-										&litMatcher{
-											pos:        position{line: 14, col: 26, offset: 199},
-											val:        ".",
-											ignoreCase: false,
-										},
-									},
-								},
-							},
-						},
-						&labeledExpr{
-							pos:   position{line: 14, col: 32, offset: 205},
-							label: "table",
-							expr: &ruleRefExpr{
-								pos:  position{line: 14, col: 38, offset: 211},
-								name: "ID",
-							},
-						},
-					},
-				},
-			},
-		},
-		{
-			name: "ID",
-			pos:  position{line: 15, col: 1, offset: 271},
-			expr: &actionExpr{
-				pos: position{line: 15, col: 7, offset: 277},
-				run: (*parser).callonID1,
-				expr: &oneOrMoreExpr{
-					pos: position{line: 15, col: 7, offset: 277},
-					expr: &charClassMatcher{
-						pos:        position{line: 15, col: 7, offset: 277},
-						val:        "[a-z]",
-						ranges:     []rune{'a', 'z'},
-						ignoreCase: false,
-						inverted:   false,
-					},
-				},
+			name: "infinite_rule",
+			pos:  position{line: 9, col: 1, offset: 76},
+			expr: &ruleRefExpr{
+				pos:  position{line: 9, col: 17, offset: 92},
+				name: "infinite_rule",
 			},
 		},
 	},
-}
-
-func (c *current) onTableRef1(database, table interface{}) (interface{}, error) {
-	return fmt.Sprintf("%v.%s", database, table), nil
-}
-
-func (p *parser) callonTableRef1() (interface{}, error) {
-	stack := p.vstack[len(p.vstack)-1]
-	_ = stack
-	return p.cur.onTableRef1(stack["database"], stack["table"])
-}
-
-func (c *current) onID1() (interface{}, error) {
-	return c.text, nil
-}
-
-func (p *parser) callonID1() (interface{}, error) {
-	stack := p.vstack[len(p.vstack)-1]
-	_ = stack
-	return p.cur.onID1()
 }
 
 var (
