@@ -127,12 +127,8 @@ var (
 
 	// errMaxExprCnt is used to signal that the maximum number of
 	// expressions have been parsed.
-	errMaxExprCnt = maxExprCntErrType(errors.New("max number of expresssions parsed"))
+	errMaxExprCnt = errors.New("max number of expresssions parsed")
 )
-
-// maxExprCntErrType is used to signal that the maximum number of
-// expressions have been parsed
-type maxExprCntErrType error
 
 // Option is a function that can set an option on the parser. It returns
 // the previous setting as an Option.
@@ -659,10 +655,12 @@ func (p *parser) parse(g *grammar) (val interface{}, err error) {
 				}
 				val = nil
 				switch e := e.(type) {
-				case maxExprCntErrType:
-					p.addErr(errors.New(p.maxExprCntMsg))
 				case error:
-					p.addErr(e)
+					if e == errMaxExprCnt {
+						p.addErr(errors.New(p.maxExprCntMsg))
+					} else {
+						p.addErr(e)
+					}
 				default:
 					p.addErr(fmt.Errorf("%v", e))
 				}
