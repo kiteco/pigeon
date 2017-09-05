@@ -5,22 +5,19 @@ import "testing"
 func TestMaxExprCnt(t *testing.T) {
 	_, err := Parse("", []byte("infinite parse"), MaxExpressions(5))
 	if err == nil {
-		t.Errorf("expected non nil error message for testing max expr cnt option.")
-		t.Fail()
+		t.Fatalf("expected non nil error message for testing max expr cnt option.")
 	}
 
 	errs, ok := err.(errList)
 	if !ok {
-		t.Errorf("expected err %v to be of type errList but got type %T", err, err)
-		t.Fail()
+		t.Fatalf("expected err %v to be of type errList but got type %T", err, err)
 	}
 
 	var found bool
 	for _, err := range errs {
 		pe, ok := err.(*parserError)
 		if !ok {
-			t.Errorf("expected err %v to be of type parserError but got type %T", err, err)
-			t.Fail()
+			t.Fatalf("expected err %v to be of type parserError but got type %T", err, err)
 		}
 
 		if pe.Inner == errMaxExprCnt {
@@ -30,7 +27,6 @@ func TestMaxExprCnt(t *testing.T) {
 	}
 
 	if !found {
-		t.Errorf("expected to find errMaxExprCnt %v in error list %v", errMaxExprCnt, errs)
-		t.Fail()
+		t.Fatalf("expected to find errMaxExprCnt %v in error list %v", errMaxExprCnt, errs)
 	}
 }
